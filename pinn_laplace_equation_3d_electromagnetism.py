@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 from scipy.stats import qmc
 tf.keras.backend.set_floatx("float64")
 
+def coordinates_transform(r,theta,phi):
+  return r*np.sin(theta)*np.cos(phi),r*np.sin(theta)*np.sin(phi),r*np.cos(theta)
+
+
 v0 = 5
 a = 1
 max_r = 100
@@ -60,13 +64,9 @@ r_c, theta_c ,phi_c = map(lambda x: np.expand_dims(x, axis=1),
                [colloc[:, 0], colloc[:, 1], colloc[:, 2]])
 
 #--------------------畫圖------------------------------------------------------------------------------------
-X1 = r_d * np.sin(phi_d) * np.cos(theta_d)
-Y1 = r_d * np.sin(phi_d) * np.sin(theta_d)
-Z1 = r_d * np.cos(phi_d)
+X1 ,Y1 ,Z1 = coordinates_transform(r_d, theta_d, phi_d)
 
-X2 = r_c * np.sin(phi_c) * np.cos(theta_c)
-Y2 = r_c * np.sin(phi_c) * np.sin(theta_c)
-Z2 = r_c * np.cos(phi_c)
+X2 ,Y2 ,Z2 = coordinates_transform(r_c, theta_c, phi_c)
 
 fig = plt.figure(figsize=(10, 10))
 ax = fig.add_subplot(111, projection='3d')
@@ -304,24 +304,18 @@ for i in ran:
   # print(r0)
   # print(phi0.shape)
 
-
-  X1 = r0 * np.sin(phi0) * np.cos(theta0)
-  Y1 = r0 * np.sin(phi0) * np.sin(theta0)
-  Z1 = r0 * np.cos(phi0)
+  X1 ,Y1 ,Z1 = coordinates_transform(r0, theta0, phi0)
 
 
   r1 = np.abs(true_solution(np.ones((2*n, n))*i,theta0,phi0)-r0)
-  X2 = r1 * np.sin(phi0) * np.cos(theta0)
-  Y2 = r1 * np.sin(phi0) * np.sin(theta0)
-  Z2 = r1 * np.cos(phi0)
+  X2 ,Y2 ,Z2 = coordinates_transform(r1, theta0, phi0)
+  
 
 
   r2 = true_solution(np.ones((2*n, n))*i,theta0,phi0)
   # print(true_solution(np.ones((2*n, n))*i,theta0,phi0))
   # print(r0)
-  X3 = r2 * np.sin(phi0) * np.cos(theta0)
-  Y3 = r2 * np.sin(phi0) * np.sin(theta0)
-  Z3 = r2 * np.cos(phi0)
+  X3 ,Y3 ,Z3 = coordinates_transform(r2, theta0, phi0)
 
   fig = plt.figure(figsize=(18, 6))
 
@@ -360,97 +354,3 @@ for i in fig_nums:
     plt.figure(i)
     plt.savefig(f'Laplace equation 3D_electromagnetism 運行結果/figure_{i}.png')
 
-# import numpy as np
-# n=3
-# # 定义 x 和 y 方向上的坐标值
-# x = np.array([1, 2, 3])
-# y = np.array([4, 5, 6, 7, 8, 9])
-
-# # 生成网格坐标矩阵
-# X0, Y0 = np.meshgrid(x, y)
-# X = X0.reshape([2*n*n, 1])
-# Y = Y0.reshape([2*n*n, 1])
-# Z = X*Y
-# Z0=Z.reshape([2*n, n])
-# print("X 坐标矩阵:")
-# print(X0)
-# print("\nY 坐标矩阵:")
-# print(Y0)
-# print(Z0)
-
-# import numpy as np
-# import matplotlib.pyplot as plt
-
-# # 生成極座標角度數據
-# theta = np.linspace(0, 2*np.pi, 1000)
-
-# # 設定極座標圖形的半徑
-# r = 2 + np.cos(3*theta)  # 一個玫瑰線的方程
-
-# # 繪製極座標圖
-# fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
-# ax.plot(theta, r)
-# ax.set_title('Polar Plot', va='bottom')
-
-# # 設置角度刻度標籤
-# ax.set_xticks(np.linspace(0, 2*np.pi, 8, endpoint=False))
-# ax.set_xticklabels(['0', r'$\pi/4$', r'$\pi/2$', r'$3\pi/4$',
-#                     r'$\pi$', r'$5\pi/4$', r'$3\pi/2$', r'$7\pi/4$'])
-
-# plt.show()
-
-# import numpy as np
-# import matplotlib.pyplot as plt
-# from mpl_toolkits.mplot3d import Axes3D
-
-# # 生成极坐标角度数据
-# theta = np.linspace(0, 2*np.pi, 1000)
-# phi = np.linspace(0, np.pi, 1000)
-# THETA, PHI = np.meshgrid(theta, phi)
-
-# # 设定极坐标图形的半径
-# R = 1 + 0.5*np.cos(3*THETA) + 0.5*np.sin(2*PHI)
-
-# # 将极坐标转换为笛卡尔坐标
-# X = R * np.sin(PHI) * np.cos(THETA)
-# Y = R * np.sin(PHI) * np.sin(THETA)
-# Z = R * np.cos(PHI)
-
-# # 创建一个三维的投影
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d')
-
-# # 绘制点点图
-# ax.scatter(X.ravel(), Y.ravel(), Z.ravel(), s=1)
-
-# # 设置坐标轴标签
-# ax.set_xlabel('X')
-# ax.set_ylabel('Y')
-# ax.set_zlabel('Z')
-
-# # 设置图形标题
-# ax.set_title('3D Polar Plot')
-
-# plt.show()
-
-# # 生成極座標角度數據
-# theta = np.linspace(0, 2*np.pi, 1000)
-# phi = np.linspace(0, np.pi, 1000)
-# THETA, PHI = np.meshgrid(theta, phi)
-
-# # 設定極座標圖形的半徑
-# R = 1 + 0.5*np.cos(3*THETA) + 0.5*np.sin(2*PHI)
-
-# # 將極座標轉換為笛卡兒坐標
-# X = R * np.sin(PHI) * np.cos(THETA)
-# Y = R * np.sin(PHI) * np.sin(THETA)
-# Z = R * np.cos(PHI)
-
-# # 繪製三維極座標圖
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d')
-# ax.plot_surface(X, Y, Z, rstride=5, cstride=5, cmap='viridis', edgecolor='none')
-# ax.set_title('3D Polar Plot')
-# ax.set_xlabel('X')
-# ax.set_ylabel('Y')
-# ax.set_zlabel('Z')
